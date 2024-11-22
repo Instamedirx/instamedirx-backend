@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: true }))
 
 
 app.use(session({
-  secret: 'secret',
+  secret: 'secret', // will change later
   resave: false,
   saveUninitialized: false
 }))
