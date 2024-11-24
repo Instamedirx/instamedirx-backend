@@ -1,15 +1,14 @@
 const { Model, DataTypes } = require('sequelize')
-
 const { sequelize } = require('../utils/db')
 const bcrypt = require('bcrypt')
 
-// const UserType = {
-//   CLIENT: 'client',
-//   DOCTOR: 'doctor',
-//   PHARMACIST: 'pharmacist'
-// }
 
-class User extends Model {}
+
+class User extends Model {
+  async validatePassword(password) {
+    return bcrypt.compare(password, this.password)
+  }
+}
 
 User.init({
   id: {
@@ -17,7 +16,7 @@ User.init({
     primaryKey: true,
     autoIncrement: true
   },
-  username: {
+  email: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
@@ -25,15 +24,37 @@ User.init({
   password: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  activated: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  roleId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: 'roles', key: 'id' },
   }
 }, {
   sequelize,
-  // modelName: 'User',
-  // tableName: 'users',
-  // timestamps: false
   underscored: true,
   timestamps: false,
-  modelName: 'user'
+  modelName: 'user',
+  defaultScope: {
+    attributes: { exclude: ['password']}
+  },
+  scopes: {
+    withPassword: {
+      attributes: { include: ['password'] }
+    }
+  }
 })
 
 User.beforeCreate(async (user) => {

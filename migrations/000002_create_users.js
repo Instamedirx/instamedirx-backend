@@ -8,7 +8,13 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
-      username: {
+      first_name: {
+        type: DataTypes.STRING,
+      },
+      last_name: {
+        type: DataTypes.STRING,
+      },
+      email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
@@ -16,6 +22,15 @@ module.exports = {
       password: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      activated: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: 'roles', key: 'id' },
       }
     })
   },
