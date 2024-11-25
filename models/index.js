@@ -21,5 +21,6 @@ module.exports = {
   User,
   Certification,
   Degree,
-  Professional
+  Professional,
+  Role
 }

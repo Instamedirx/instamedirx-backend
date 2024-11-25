@@ -1,27 +1,16 @@
 const { Sequelize } = require('sequelize')
 const { Umzug, SequelizeStorage } = require('umzug')
+const cls = require('cls-hooked')
+const namespace = cls.createNamespace('sequelize-transaction')
 const { DB_NAME, DB_USERNAME, DB_PASSWORD } = require('./config')
+
+Sequelize.useCLS(namespace)
 
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres'
 })
 
-// const runMigrations = async () => {
-//   const migrator = new Umzug({
-//     migrations: {
-//       glob: 'migrations/*.js'
-//     },
-//     context: sequelize.getQueryInterface(),
-//     storage: new SequelizeStorage({ sequelize, tableName: 'migrations' }),
-//     logger: console
-//   })
-
-//   const migrations = await migrator.up()
-//   console.log('Migrations up to date', {
-//     files: migrations.map((mig) => mig.name),
-//   })
-// }
 
 const connectToDatabase = async () => {
   try {
