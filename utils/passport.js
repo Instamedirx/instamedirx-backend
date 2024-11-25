@@ -1,6 +1,10 @@
 const passport = require('passport')
-const { User, Role } = require('../models')
+const crypto = require('crypto')
+const { User, Role, SocialAuth } = require('../models')
+const bcrypt = require('bcrypt')
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('./config')
 const LocalStrategy = require('passport-local').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 
 passport.use(new LocalStrategy({
@@ -18,6 +22,66 @@ passport.use(new LocalStrategy({
   }
   
   return done(null, user) 
+}))
+
+passport.use(new GoogleStrategy({
+  clientID: GOOGLE_CLIENT_ID,
+  clientSecret: GOOGLE_CLIENT_SECRET,
+  callbackURL: '/api/auth/google/callback',
+}, async (accessToken, refreshToken, profile, done) => {
+  console.log('accessToken', accessToken)
+  console.log('refreshToken', refreshToken)
+
+  // Check if the user already exists
+  let user = await User.findOne({ where: { email: profile.emails[0].value } })
+
+  if (!user) {
+    const randomPassword = crypto.randomBytes(20).toString('hex')
+    const hashedPassword = await bcrypt.hash(randomPassword, 10)
+    
+    user = await User.create({
+      email: profile.emails[0].value,
+      firstName: profile.name.givenName,
+      lastName: profile.name.familyName,
+      password: hashedPassword
+    })
+
+
+    // Link the social authentication provider (Google)
+    await SocialAuth.create({
+      userId: user.id,
+      providerUserId: profile.id,
+      provider: 'google',
+      email: profile.emails[0].value,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    })
+  } else {
+    // If the user exists, check if their social auth is linked
+    const socialAuth = await SocialAuth.findOne({
+      where: { user_id: user.id, provider: 'google' },
+    })
+
+    if (!socialAuth) {
+      // If not, link the new social login
+      await SocialAuth.create({
+        user_id: user.id,
+        provider_user_id: profile.id,
+        provider: 'google',
+        email: profile.emails[0].value,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      })
+    }
+
+    if (accessToken !== socialAuth.accessToken || refreshToken !== socialAuth?.refreshToken) {
+      await socialAuth.update({
+        accessToken,
+        refreshToken
+      })
+    }
+  }
+  return done(null, user)
 }))
 
 
@@ -40,3 +104,15 @@ passport.deserializeUser(async (id, done) => {
 })
 
 module.exports = passport
+
+
+// console.log(profile)
+//   const user = {
+//     id: profile.id,
+//     email: profile.emails[0].value,
+//     name: profile.displayName,
+//     provider: 'google'
+//   }
+//   console.log('user',user)
+//   console.log('accessToken',accessToken)
+//   console.log('refreshToken',refreshToken)

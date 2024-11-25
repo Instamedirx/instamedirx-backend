@@ -1,11 +1,39 @@
 const { Model, DataTypes } = require('sequelize')
+const crypto = require('crypto')
 const { sequelize } = require('../utils/db')
 const bcrypt = require('bcrypt')
 const { Validator } = require('../validators/validator')
+const { Token } = require('./token')
+const { Op } = require('sequelize')
 
 
 
 class User extends Model {
+  static async getForToken(scope, token) {
+    const hash = crypto.createHash('sha256').update(token).digest('hex')
+    const tokenRecord = await Token.findOne({
+      where: {
+        hash,
+        scope,
+        expiry: {
+          [Op.gt]: new Date(), 
+        },
+      },
+      include: User,
+    })
+
+    console.log(tokenRecord)
+    // console.log()
+    // console.log()
+
+    if (!tokenRecord) {
+      console.log('Token not found, expired, or invalid.')
+      return null
+    }
+
+    return tokenRecord.user
+  }
+
   async validatePassword(password) {
     console.log(password, this.password)
     return bcrypt.compare(password, this.password)
@@ -85,7 +113,6 @@ User.init({
   },
   roleId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: { model: 'roles', key: 'id' },
   }
 }, {
@@ -104,8 +131,10 @@ User.init({
 })
 
 User.beforeCreate(async (user) => {
-  const saltRounds = 10
-  user.password = await bcrypt.hash(user.password, saltRounds)
+  if (user.password) {
+    const saltRounds = 10
+    user.password = await bcrypt.hash(user.password, saltRounds)
+  }
 })
 
 

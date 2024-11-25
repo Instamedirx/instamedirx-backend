@@ -19,7 +19,7 @@ router.post('/complete-profile', async (request, response) => {
 
   try {
     await completeProfile(request.body, request.user.id)
-    response.status(201).send({ message: 'profile completed successfully'})
+    response.status(201).send({ message: 'profile created successfully'})
   } catch (error) {
     response.status(500).send({ error: 'something happened'})
     console.log(error)

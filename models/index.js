@@ -4,6 +4,8 @@ const Certification = require('./certification')
 const Degree = require('./degree')
 const Role = require('./role')
 const Professional = require('./professional')
+const SocialAuth = require('./socialAuth')
+const { Token } = require('./token')
 
 User.belongsTo(Role)
 Role.hasMany(User)
@@ -16,11 +18,18 @@ Professional.hasMany(Degree)
 Certification.belongsTo(Professional)
 Degree.belongsTo(Professional)
 
+User.hasMany(SocialAuth)
+SocialAuth.belongsTo(User)
+
+User.hasMany(Token)
+Token.belongsTo(User)
 
 module.exports = {
   User,
   Certification,
   Degree,
   Professional,
-  Role
+  Role,
+  SocialAuth,
+  Token
 }

@@ -14,6 +14,9 @@ module.exports = {
       last_name: {
         type: DataTypes.STRING,
       },
+      phone_number: {
+        type: DataTypes.STRING,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,7 +32,6 @@ module.exports = {
       },
       role_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: { model: 'roles', key: 'id' },
       }
     })
