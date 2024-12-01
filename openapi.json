@@ -449,7 +449,7 @@
     }
   },
   "paths": {
-    "/set-role": {
+    "/auth/set-role": {
       "put": {
         "tags": [
           "auth"
@@ -485,7 +485,7 @@
         }
       }
     },
-    "/request-verification": {
+    "/auth/request-verification": {
       "post": {
         "tags": [
           "auth"
@@ -511,7 +511,7 @@
         }
       }
     },
-    "/register": {
+    "/auth/register": {
       "post": {
         "tags": [
           "auth"
@@ -544,7 +544,7 @@
         }
       }
     },
-    "/verify-email": {
+    "/auth/verify-email": {
       "put": {
         "tags": [
           "auth"
@@ -577,7 +577,7 @@
         }
       }
     },
-    "/login": {
+    "/auth/login": {
       "post": {
         "tags": [
           "auth"
@@ -603,7 +603,7 @@
         }
       }
     },
-    "/complete-profile": {
+    "/auth/complete-profile": {
       "post": {
         "tags": [
           "users"
@@ -626,7 +626,7 @@
         }
       }
     },
-    "/google": {
+    "/auth/google": {
       "get": {
         "summary": "Initiate Google OAuth authentication",
         "description": "Redirects the user to Google's OAuth 2.0 consent screen.",
@@ -651,7 +651,7 @@
         ]
       }
     },
-    "/google/callback": {
+    "/auth/google/callback": {
       "get": {
         "summary": "Handle Google OAuth callback",
         "description": "Processes the callback from Google after user authentication.",
