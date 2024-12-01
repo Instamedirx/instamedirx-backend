@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: Instamedirx API
+  version: 1.0.0
+  description: API for a telemedicine
+paths:
+  /set-role:
+    put:
+      summary: Set user role
+      description: Allows an authenticated user to set their role. Role can only be set once.
+      operationId: setRole
+      security:
+        - sessionAuth: []  # References security scheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/RoleRequest'
+      responses:
+        '200':
+          $ref: './responses.yaml#/RoleSetSuccess'
+        '400':
+          $ref: './responses.yaml#/BadRequest'
+        '404':
+          $ref: './responses.yaml#/RoleNotFound'
+        '401':
+          $ref: './responses.yaml#/Unauthorized'
+components:
+  schemas:
+    $ref: './schemas.yaml'
+  securitySchemes:
+    $ref: './security.yaml'

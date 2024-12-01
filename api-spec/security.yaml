@@ -1,0 +1,4 @@
+sessionAuth:
+  type: apiKey
+  in: cookie
+  name: connect.sid  # Common name for session cookie in Express.js, adjust if different

@@ -1,6 +1,6 @@
 const passport = require('passport')
 const crypto = require('crypto')
-const { User, Role, SocialAuth } = require('../models')
+const { User, SocialAuth } = require('../models')
 const bcrypt = require('bcrypt')
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('./config')
 const LocalStrategy = require('passport-local').Strategy
@@ -89,12 +89,13 @@ passport.serializeUser((user, done) => done(null, user.id))
 
 
 passport.deserializeUser(async (id, done) => {
-  const user = await User.findByPk(id, {
-    include: {
-      model: Role,
-      attributes: ['name']
-    }
-  })
+  const user = await User.findByPk(id)
+  // const user = await User.findByPk(id, {
+  //   include: {
+  //     model: Role,
+  //     attributes: ['name']
+  //   }
+  // })
 
   if (!user) {
     return done(new Error('User not found'), null) 
@@ -105,14 +106,3 @@ passport.deserializeUser(async (id, done) => {
 
 module.exports = passport
 
-
-// console.log(profile)
-//   const user = {
-//     id: profile.id,
-//     email: profile.emails[0].value,
-//     name: profile.displayName,
-//     provider: 'google'
-//   }
-//   console.log('user',user)
-//   console.log('accessToken',accessToken)
-//   console.log('refreshToken',refreshToken)

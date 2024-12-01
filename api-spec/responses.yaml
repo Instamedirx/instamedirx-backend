@@ -1,0 +1,56 @@
+RoleSetSuccess:
+  description: Role set successfully.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "role set successfully"
+
+BadRequest:
+  description: Bad request due to validation errors or incorrect data.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+          errors:
+            type: array
+            items:
+              type: string
+      examples:
+        roleAlreadySet:
+          summary: Role already set error
+          value:
+            error: "role cannot be changed after being set"
+        validationError:
+          summary: Validation error
+          value:
+            errors:
+              - "Invalid role"
+
+RoleNotFound:
+  description: The specified role was not found.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            example: "Role not found"
+
+Unauthorized:
+  description: Authentication required.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            example: "Authentication required"

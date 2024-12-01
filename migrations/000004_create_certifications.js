@@ -11,7 +11,6 @@ module.exports = {
       professional_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: { model: 'professionals', key: 'id' },
         onDelete: 'CASCADE'
       },

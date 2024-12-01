@@ -1,0 +1,33 @@
+RoleRequest:
+  type: object
+  properties:
+    role:
+      name: string
+      description: Name of the role to assign.
+      example: "admin"
+  required:
+    - role
+
+Role:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: Unique identifier for the role.
+      example: 1
+    name:
+      type: string
+      description: Name of the role.
+      example: "admin"
+
+User:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 123
+    username:
+      type: string
+      example: "john_doe"
+    role:
+      $ref: '#/Role'

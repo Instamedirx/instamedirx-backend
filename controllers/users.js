@@ -1,6 +1,7 @@
 const  router = require('express').Router()
-const { User } = require('../models')
+const { User, Role } = require('../models')
 const completeProfile = require('../services/completeProfile')
+const { ensureAuthenticated } = require('../utils/middleware')
 
 
 router.get('/:id', async (request, response) => {
@@ -8,12 +9,19 @@ router.get('/:id', async (request, response) => {
   response.json(user)
 })
 
-router.post('/complete-profile', async (request, response) => {
-  if (!request.user) {
-    return response.status(401).send({ error: 'you must be authenticated to access this resource' })
+router.post('/complete-profile', ensureAuthenticated, async (request, response) => {
+  const user = await User.findByPk(request.user.id, {
+    include: {
+      model: Role,
+      attributes: ['name']
+    }
+  })
+
+  if (!user.setRole) {
+    return response.status(403).send({ error: 'role not set'})
   }
 
-  if (request.user.role.name !== 'doctor' && request.user.role.name !== 'pharmacist') {
+  if (user.role.name !== 'doctor' && user.role.name !== 'pharmacist') {
     return response.status(403).send({ error: 'profile completion is not required for clients'})
   }
 

@@ -33,6 +33,10 @@ module.exports = {
       role_id: {
         type: DataTypes.INTEGER,
         references: { model: 'roles', key: 'id' },
+      },
+      role_set: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     })
   },

@@ -22,6 +22,19 @@ class Token extends Model {
     token.plaintext = plaintext
     return token
   }
+
+  static validateToken(validator, token) {
+    validator.check(typeof token !== 'undefined' && token !== null, 'token', 'must be provided')
+    if (token) {
+      validator.check(token.length == 6, 'token', 'must be at 6 characters long')
+    }
+  }
+
+  static async deleteAllForUser(scope, userId) {
+    await Token.destroy({
+      where: { scope, userId}
+    })
+  }
 }
 
 Token.init({

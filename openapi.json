@@ -1,0 +1,697 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Instamedirx API",
+    "version": "1.0.0",
+    "description": "API for setting user roles post-registration."
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Manages user creation, login, and roles"
+    },
+    {
+      "name": "users",
+      "description": "Manages user profiles"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid"
+      }
+    },
+    "schemas": {
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "examples": [
+              1
+            ]
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "client",
+              "doctor",
+              "pharmacist"
+            ]
+          }
+        }
+      },
+      "TokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "examples": [
+              "123456"
+            ]
+          }
+        }
+      },
+      "RoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "examples": [
+              "client",
+              "doctor",
+              "pharmacist"
+            ]
+          }
+        }
+      },
+      "EmailRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "example@gmail.com"
+            ]
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "example@gmail.com"
+            ]
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "examples": [
+              "paswword123"
+            ]
+          }
+        }
+      },
+      "UserCreate": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "examples": [
+              "example@gmail.com"
+            ]
+          },
+          "phone": {
+            "type": "string",
+            "examples": [
+              "1234567890"
+            ]
+          },
+          "firstName": {
+            "type": "string",
+            "examples": [
+              "John"
+            ]
+          },
+          "lastName": {
+            "type": "string",
+            "examples": [
+              "Doe"
+            ]
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "examples": [
+              "password123"
+            ]
+          }
+        }
+      },
+      "UserCreateResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "examples": [
+              "User registered successfully"
+            ]
+          },
+          "user": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserCreate"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "description": "Password field omitted in the response",
+                    "writeOnly": true
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "professionalDetail": {
+            "$ref": "#/components/schemas/ProfessionalDetail"
+          },
+          "certifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Certification"
+            }
+          },
+          "degrees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Degree"
+            }
+          }
+        }
+      },
+      "ProfessionalDetail": {
+        "type": "object",
+        "properties": {
+          "facilityName": {
+            "type": "string",
+            "examples": [
+              "BestLife"
+            ]
+          },
+          "facilityAddress": {
+            "type": "string",
+            "examples": [
+              "Accra, Ghana"
+            ]
+          },
+          "zipCode": {
+            "type": "string",
+            "examples": [
+              "0224"
+            ]
+          },
+          "city": {
+            "type": "string",
+            "examples": [
+              "Accra"
+            ]
+          },
+          "country": {
+            "type": "string",
+            "examples": [
+              "Ghana"
+            ]
+          },
+          "stateProvince": {
+            "type": "string",
+            "examples": [
+              "Greater Accra"
+            ]
+          },
+          "ethnicity": {
+            "type": "string",
+            "examples": [
+              "Black African"
+            ]
+          },
+          "spokenLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              "English",
+              "Twi"
+            ]
+          },
+          "medicalLicenseNumber": {
+            "type": "string",
+            "examples": [
+              "GH123456"
+            ]
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "examples": [
+              10
+            ]
+          },
+          "specialities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              "Pediatrics",
+              "General Medicine"
+            ]
+          }
+        }
+      },
+      "Certification": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "examples": [
+              "Advanced Cardiac Life Support"
+            ]
+          },
+          "licenseNumber": {
+            "type": "string",
+            "examples": [
+              "22344344"
+            ]
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date",
+            "examples": [
+              "2022-03-12"
+            ]
+          },
+          "documentProof": {
+            "type": "string",
+            "examples": [
+              "path/to/certification1.pdf"
+            ]
+          }
+        }
+      },
+      "Degree": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "examples": [
+              "Doctor of Medicine"
+            ]
+          },
+          "institution": {
+            "type": "string",
+            "examples": [
+              "Grace Child University"
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "examples": [
+              2012
+            ]
+          },
+          "documentProof": {
+            "type": "string",
+            "examples": [
+              "path/to/degree1.pdf"
+            ]
+          }
+        }
+      }
+    },
+    "responses": {
+      "SimpleSuccess": {
+        "description": "Simple success message",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "examples": [
+                    "operation successfully done"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Invalid input or missing required fields",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnprocessableEntityError": {
+        "description": "The request was well-formed but was unable to be processed due to semantic errors",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field": {
+                        "type": "string",
+                        "examples": [
+                          "email"
+                        ]
+                      },
+                      "message": {
+                        "type": "string",
+                        "examples": [
+                          "Email already in use"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "RoleNotFound": {
+        "description": "Role not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "examples": [
+                    "role not found"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Authentication is required or failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "examples": [
+                    "you must be authenticated to access this resource"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Access to the resource is not allowed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "examples": [
+                    "You do not have permission to perform this action"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/set-role": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Set user role",
+        "description": "Allows an authenticated user to set their role. Role can only be set once.",
+        "operationId": "setRole",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SimpleSuccess"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenError"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          }
+        }
+      }
+    },
+    "/request-verification": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Request Verification Email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SimpleSuccess"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Create User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          }
+        }
+      }
+    },
+    "/verify-email": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "email verification successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntityError"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "User Local Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SimpleSuccess"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/complete-profile": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Complete User Profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SimpleSuccess"
+          }
+        }
+      }
+    },
+    "/google": {
+      "get": {
+        "summary": "Initiate Google OAuth authentication",
+        "description": "Redirects the user to Google's OAuth 2.0 consent screen.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "platform",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Specifies the platform (`mobile` or `web`) initiating the authentication process.",
+            "required": false
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects the user to Google's OAuth consent screen."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/google/callback": {
+      "get": {
+        "summary": "Handle Google OAuth callback",
+        "description": "Processes the callback from Google after user authentication.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The state value used during authentication to identify the platform (`mobile` or `web`).",
+            "required": false
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects the user based on the platform.",
+            "headers": {
+              "Location": {
+                "description": "The URL to which the user is redirected.",
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "https://your-frontend-url.com/auth/success",
+                    "myapp://oauth?authenticated=true"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "sessionAuth": []
+    }
+  ]
+}

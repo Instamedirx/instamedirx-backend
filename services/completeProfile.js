@@ -18,10 +18,8 @@ const completeProfile = async (profileData, userId) => {
       specialities: profileData.profressionalDetail.specialities,
     })
 
-    
 
     const certifications = profileData.certifications.map((cert) => ({
-      // profressionalId: profressional.id,
       professionalId: professional.id,
       title: cert.title,
       licenseNumber: cert.licenseNumber,
@@ -32,7 +30,6 @@ const completeProfile = async (profileData, userId) => {
     
     
     const degrees = profileData.degrees.map((degree) => ({
-      // profressionalId: profressional.id,
       professionalId: professional.id,
       title: degree.title,
       institution: degree.institution,

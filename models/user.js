@@ -22,9 +22,6 @@ class User extends Model {
       include: User,
     })
 
-    console.log(tokenRecord)
-    // console.log()
-    // console.log()
 
     if (!tokenRecord) {
       console.log('Token not found, expired, or invalid.')
@@ -47,11 +44,18 @@ class User extends Model {
   }
 
   static validatePassword(validator, password) {
-    // const validator = new Validator()
     validator.check(typeof password !== 'undefined' && password !== null, 'password', 'must be provided')
     if (password) {
       validator.check(password.length >= 8, 'password', 'must be at least 8 characters long')
       validator.check(password.length <= 72, 'password', 'must not be more than 72 characters long')
+    }
+  }
+
+  static validateRole(validator, role) {
+    validator.check(typeof role !== 'undefined' && role !== null, 'role', 'must be provided')
+
+    if (role) {
+      validator.check(Validator.in(role, 'client', 'doctor', 'pharmacist'), 'role', 'invalid role value')
     }
   }
 
@@ -75,12 +79,6 @@ class User extends Model {
 
     User.validateEmail(validator, user.email)
     User.validatePassword(validator, user.password)
-
-    validator.check(typeof user.role !== 'undefined' && user.role !== null, 'role', 'must be provided')
-
-    if (user.role) {
-      validator.check(Validator.in(user.role, 'client', 'doctor', 'pharmacist'), 'role', 'invalid role value')
-    }
   }
 }
 
@@ -114,7 +112,11 @@ User.init({
   roleId: {
     type: DataTypes.INTEGER,
     references: { model: 'roles', key: 'id' },
-  }
+  },
+  roleSet: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
 }, {
   sequelize,
   underscored: true,
