@@ -1,11 +1,13 @@
 const express = require('express')
 require('express-async-errors')
 const app = express()
+const cors = require('cors')
 const passport = require('./utils/passport')
 const session = require('express-session')
 const middleware = require('./utils/middleware')
 const swaggerUi = require('swagger-ui-express')
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
